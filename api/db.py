@@ -3,7 +3,15 @@ from __future__ import annotations
 import os
 from datetime import datetime
 
-from sqlalchemy import DateTime, Float, Integer, String, create_engine, func
+from sqlalchemy import (
+    DateTime,
+    Float,
+    Integer,
+    String,
+    UniqueConstraint,
+    create_engine,
+    func,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -22,6 +30,16 @@ class Expense(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+class Budget(Base):
+    __tablename__ = "budgets"
+    __table_args__ = (UniqueConstraint("user_id", "category"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(Integer, index=True)
+    category: Mapped[str] = mapped_column(String(64))
+    limit_amount: Mapped[float] = mapped_column(Float)
 
 
 def make_engine(url: str | None = None):
