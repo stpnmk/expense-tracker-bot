@@ -11,6 +11,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import (
+    BotCommand,
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
@@ -261,8 +262,23 @@ async def quick_add(message: Message) -> None:
     await message.answer(format_saved(saved))
 
 
+async def set_commands(bot: Bot) -> None:
+    await bot.set_my_commands(
+        [
+            BotCommand(command="start", description="Справка"),
+            BotCommand(command="add", description="Добавить трату кнопками"),
+            BotCommand(command="stats", description="Статистика за период"),
+            BotCommand(command="last", description="Последние траты"),
+            BotCommand(command="undo", description="Удалить последнюю трату"),
+            BotCommand(command="budget", description="Задать лимит по категории"),
+            BotCommand(command="budgets", description="Лимиты и остатки"),
+        ]
+    )
+
+
 async def main() -> None:
     bot = Bot(BOT_TOKEN)
+    await set_commands(bot)
     await dp.start_polling(bot)
 
 
